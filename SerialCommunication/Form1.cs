@@ -1,13 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
 using System.IO.Ports;
+using System.Windows.Forms;
 
 namespace SerialCommunication
 {
@@ -74,27 +67,42 @@ namespace SerialCommunication
             // 
             // cBoxDataBits
             // 
+            this.cBoxDataBits.AutoCompleteCustomSource.AddRange(new string[] {
+            "5",
+            "6",
+            "7",
+            "8"});
             this.cBoxDataBits.FormattingEnabled = true;
             this.cBoxDataBits.Location = new System.Drawing.Point(172, 93);
             this.cBoxDataBits.Name = "cBoxDataBits";
             this.cBoxDataBits.Size = new System.Drawing.Size(121, 28);
             this.cBoxDataBits.TabIndex = 0;
+            this.cBoxDataBits.Text = "8";
             // 
             // cBoxStopBits
             // 
             this.cBoxStopBits.FormattingEnabled = true;
+            this.cBoxStopBits.Items.AddRange(new object[] {
+            "One",
+            "Two"});
             this.cBoxStopBits.Location = new System.Drawing.Point(172, 127);
             this.cBoxStopBits.Name = "cBoxStopBits";
             this.cBoxStopBits.Size = new System.Drawing.Size(121, 28);
             this.cBoxStopBits.TabIndex = 0;
+            this.cBoxStopBits.Text = "One";
             // 
             // cBoxBaudRate
             // 
+            this.cBoxBaudRate.AutoCompleteCustomSource.AddRange(new string[] {
+            "2400",
+            "4800",
+            "9600"});
             this.cBoxBaudRate.FormattingEnabled = true;
             this.cBoxBaudRate.Location = new System.Drawing.Point(172, 59);
             this.cBoxBaudRate.Name = "cBoxBaudRate";
             this.cBoxBaudRate.Size = new System.Drawing.Size(121, 28);
             this.cBoxBaudRate.TabIndex = 0;
+            this.cBoxBaudRate.Text = "9600";
             // 
             // label1
             // 
@@ -138,10 +146,15 @@ namespace SerialCommunication
             // cBoxParityBits
             // 
             this.cBoxParityBits.FormattingEnabled = true;
+            this.cBoxParityBits.Items.AddRange(new object[] {
+            "None",
+            "Odd",
+            "Even"});
             this.cBoxParityBits.Location = new System.Drawing.Point(172, 161);
             this.cBoxParityBits.Name = "cBoxParityBits";
             this.cBoxParityBits.Size = new System.Drawing.Size(121, 28);
             this.cBoxParityBits.TabIndex = 0;
+            this.cBoxParityBits.Text = "None";
             // 
             // label5
             // 
@@ -161,22 +174,23 @@ namespace SerialCommunication
             this.groupBox2.Controls.Add(this.btnOpen);
             this.groupBox2.Location = new System.Drawing.Point(6, 215);
             this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(299, 196);
+            this.groupBox2.Size = new System.Drawing.Size(299, 155);
             this.groupBox2.TabIndex = 1;
             this.groupBox2.TabStop = false;
             // 
             // btnOpen
             // 
-            this.btnOpen.Location = new System.Drawing.Point(16, 25);
+            this.btnOpen.Location = new System.Drawing.Point(14, 16);
             this.btnOpen.Name = "btnOpen";
             this.btnOpen.Size = new System.Drawing.Size(75, 33);
             this.btnOpen.TabIndex = 2;
             this.btnOpen.Text = "OPEN";
             this.btnOpen.UseVisualStyleBackColor = true;
+            this.btnOpen.Click += new System.EventHandler(this.btnOpen_Click);
             // 
             // btnClose
             // 
-            this.btnClose.Location = new System.Drawing.Point(97, 25);
+            this.btnClose.Location = new System.Drawing.Point(95, 16);
             this.btnClose.Name = "btnClose";
             this.btnClose.Size = new System.Drawing.Size(75, 33);
             this.btnClose.TabIndex = 2;
@@ -185,7 +199,7 @@ namespace SerialCommunication
             // 
             // progressBar1
             // 
-            this.progressBar1.Location = new System.Drawing.Point(16, 116);
+            this.progressBar1.Location = new System.Drawing.Point(14, 55);
             this.progressBar1.Name = "progressBar1";
             this.progressBar1.Size = new System.Drawing.Size(156, 33);
             this.progressBar1.TabIndex = 3;
@@ -210,7 +224,7 @@ namespace SerialCommunication
             // 
             // Form1
             // 
-            this.ClientSize = new System.Drawing.Size(1080, 430);
+            this.ClientSize = new System.Drawing.Size(580, 426);
             this.Controls.Add(this.tBoxDataOut);
             this.Controls.Add(this.groupBox2);
             this.Controls.Add(this.groupBox1);
@@ -247,6 +261,27 @@ namespace SerialCommunication
 
         private void Form1_Load(object sender, EventArgs e)
         {
+            string[] ports = SerialPort.GetPortNames();
+            cBoxComPort.Items.AddRange(ports);
+        }
+
+        private void btnOpen_Click(object sender, EventArgs e)
+        {
+
+            try
+            {
+                serialPort1.PortName = cBoxComPort.Text;
+                serialPort1.BaudRate = Convert.ToInt32(cBoxBaudRate.Text);
+                serialPort1.DataBits = Convert.ToInt32(cBoxDataBits.Text);
+                serialPort1.StopBits = (StopBits)Enum.Parse(typeof(StopBits), cBoxStopBits.Text);
+                serialPort1.Parity = (Parity)Enum.Parse(typeof(Parity), cBoxParityBits.Text);
+
+            }
+            catch(Exception ex)
+            {
+                MessageBox.Show(ex.Message("Error"), MessageBoxButtons.OK,MessageBoxIcon.Error);
+            }
+            
         }
     }
 }
