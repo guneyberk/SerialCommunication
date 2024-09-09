@@ -7,6 +7,8 @@ namespace SerialCommunication
     public partial class Form1 : Form
     {
         SerialPort serialPort;
+        public string dataOUT;
+
         public Form1()
         {
             InitializeComponent();
@@ -196,6 +198,7 @@ namespace SerialCommunication
             this.btnClose.TabIndex = 2;
             this.btnClose.Text = "CLOSE";
             this.btnClose.UseVisualStyleBackColor = true;
+            this.btnClose.Click += new System.EventHandler(this.btnClose_Click);
             // 
             // progressBar1
             // 
@@ -213,6 +216,7 @@ namespace SerialCommunication
             this.btnSendData.TabIndex = 2;
             this.btnSendData.Text = "SEND DATA";
             this.btnSendData.UseVisualStyleBackColor = true;
+            this.btnSendData.Click += new System.EventHandler(this.btnSendData_Click);
             // 
             // tBoxDataOut
             // 
@@ -269,19 +273,40 @@ namespace SerialCommunication
         {
 
             try
-            {
+            { 
                 serialPort1.PortName = cBoxComPort.Text;
                 serialPort1.BaudRate = Convert.ToInt32(cBoxBaudRate.Text);
                 serialPort1.DataBits = Convert.ToInt32(cBoxDataBits.Text);
                 serialPort1.StopBits = (StopBits)Enum.Parse(typeof(StopBits), cBoxStopBits.Text);
                 serialPort1.Parity = (Parity)Enum.Parse(typeof(Parity), cBoxParityBits.Text);
 
+                serialPort1.Open();
+                progressBar1.Value = 100; 
+
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
-                MessageBox.Show(ex.Message("Error"), MessageBoxButtons.OK,MessageBoxIcon.Error);
+                MessageBox.Show(ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
-            
+
+        }
+
+        private void btnClose_Click(object sender, EventArgs e)
+        {
+            if(serialPort1.IsOpen)
+            {
+                 serialPort1.Close();
+                progressBar1.Value = 0;
+            }
+        }
+
+        private void btnSendData_Click(object sender, EventArgs e)
+        {
+            if(serialPort1.IsOpen)
+            {
+                dataOUT=tBoxDataOut.Text;
+                serialPort1.WriteLine();
+            }
         }
     }
 }
